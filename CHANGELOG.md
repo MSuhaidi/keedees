@@ -1,3 +1,12 @@
+## [0.2.0] - 2026-02-20
+### Added
+- **Call Parent Button:** Direct dial functionality for late children.
+- **Browser Notifications:** Automated alerts for late arrivals.
+- **Localized Mock Data:** Expanded to 12 children with Malaysian names and phone numbers.
+- **Mobile Responsive Design:** Optimized dashboard for phone screens.
+### Fixed
+- **Late Alert Logic:** Fixed false positives by introducing `leftTime` and excluding 'Checked In' children from alerts.
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

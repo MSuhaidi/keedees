@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, type Child } from './db';
 import { initializeMockData } from './mockData';
@@ -8,6 +8,7 @@ const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pin, setPin] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
+  const notificationCooldowns = useRef<Record<number, number>>({});
   
   const rooms = useLiveQuery(() => db.rooms.toArray());
   const children = useLiveQuery(() => db.children.toArray());
@@ -16,8 +17,34 @@ const App: React.FC = () => {
     initializeMockData();
     // Clock for Absence Alerts
     const timer = setInterval(() => setCurrentTime(new Date()), 30000); // Check every 30s
+    
+    // Request Notification Permission
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+
     return () => clearInterval(timer);
   }, []);
+
+  // Periodic Browser Notifications
+  useEffect(() => {
+    if (!children || !isAuthenticated || Notification.permission !== "granted") return;
+
+    const lateChildren = children.filter(c => isLate(c));
+    const now = Date.now();
+
+    lateChildren.forEach(child => {
+      const lastNotified = notificationCooldowns.current[child.id!] || 0;
+      // Notify every 5 minutes (300,000 ms)
+      if (now - lastNotified > 300000) {
+        new Notification('TapTots: Late Alert', {
+          body: `${child.firstName} ${child.lastName} has not arrived yet.`,
+          icon: child.photoUrl
+        });
+        notificationCooldowns.current[child.id!] = now;
+      }
+    });
+  }, [children, currentTime, isAuthenticated]);
 
   const handlePinInput = (num: string) => {
     if (pin.length < 4) {
@@ -33,7 +60,7 @@ const App: React.FC = () => {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    setPin(''); // FIX: Reset PIN on logout
+    setPin(''); 
   };
 
   const toggleAttendance = async (child: Child) => {
@@ -51,14 +78,20 @@ const App: React.FC = () => {
   };
 
   const isLate = (child: Child) => {
+    // Only late if NOT Checked In
     if (child.status === 'Checked In') return false;
-    if (!child.cutoffTime) return false;
+    if (!child.cutoffTime || !child.leftTime) return false;
     
-    const [hours, minutes] = child.cutoffTime.split(':').map(Number);
-    const cutoffDate = new Date();
-    cutoffDate.setHours(hours, minutes, 0, 0);
+    const now = currentTime.getHours() * 60 + currentTime.getMinutes();
     
-    return currentTime > cutoffDate;
+    const [cHours, cMins] = child.cutoffTime.split(':').map(Number);
+    const [lHours, lMins] = child.leftTime.split(':').map(Number);
+    
+    const cutoff = cHours * 60 + cMins;
+    const left = lHours * 60 + lMins;
+    
+    // Late if now is between cutoff and left time
+    return now >= cutoff && now < left;
   };
 
   if (!isAuthenticated) {
@@ -89,8 +122,8 @@ const App: React.FC = () => {
       <header className="dashboard-header">
         <h1>TapTots Dashboard</h1>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <span>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-          <button onClick={handleLogout} style={{ padding: '0.5rem 1rem' }}>Lock Kiosk</button>
+          <span style={{ fontWeight: 'bold' }}>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          <button onClick={handleLogout} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>Lock Kiosk</button>
         </div>
       </header>
 
@@ -113,7 +146,15 @@ const App: React.FC = () => {
                       <img src={child.photoUrl} alt={child.firstName} />
                       <span className="child-name">{child.firstName} {child.lastName}</span>
                       <span className="status-badge">{child.status}</span>
-                      {late && <div style={{ color: '#e74c3c', fontSize: '0.8rem', marginTop: '0.2rem' }}>Call Parent!</div>}
+                      {late && (
+                        <a 
+                          href={`tel:${child.parentPhone}`} 
+                          className="call-btn"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Call Parent
+                        </a>
+                      )}
                     </div>
                   );
                 })}

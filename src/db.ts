@@ -14,6 +14,8 @@ interface Child {
   status: 'Checked In' | 'Checked Out';
   lastUpdated: string;
   cutoffTime: string; // HH:mm format, e.g., "09:00"
+  leftTime: string;   // HH:mm format, e.g., "17:00"
+  parentPhone: string; // e.g., "+60123456789"
 }
 
 interface AttendanceLog {

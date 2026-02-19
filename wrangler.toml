@@ -1,6 +1,6 @@
-name = "taptots"
+name = "one-tap-tots"
 pages_build_output_dir = "dist"
 
 [vars]
 # Add environment variables here if needed
-APP_VERSION = "0.1.0"
+APP_VERSION = "0.2.0"
