@@ -32,7 +32,7 @@ const db = new Dexie('TapTotsDB') as Dexie & {
 };
 
 // Schema: Room(id, name), Child(id, roomId, status), Logs(id, childId)
-db.version(1).stores({
+db.version(2).stores({
   rooms: '++id, name',
   children: '++id, roomId, status',
   logs: '++id, childId, timestamp'

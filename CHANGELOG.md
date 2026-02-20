@@ -1,3 +1,9 @@
+## [0.2.1] - 2026-02-20
+### Fixed
+- **Database Persistence:** Improved Dexie.js versioning and mock data patching to ensure existing users receive schema updates without manual cache clearing.
+- **Offline Reliability:** Properly configured `vite-plugin-pwa` to ensure the Service Worker caches all assets, enabling full functionality after a page refresh in offline mode.
+- **Mock Data Maintenance:** Optimized initialization logic to avoid duplicate property errors and correctly handle existing records.
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
