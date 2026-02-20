@@ -25,7 +25,7 @@ interface AttendanceLog {
   type: 'IN' | 'OUT';
 }
 
-const db = new Dexie('TapTotsDB') as Dexie & {
+const db = new Dexie('KeedeesDB') as Dexie & {
   rooms: EntityTable<Room, 'id'>;
   children: EntityTable<Child, 'id'>;
   logs: EntityTable<AttendanceLog, 'id'>;

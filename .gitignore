@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Documentation & Maintenance
+/docs/
+MAINTENANCE_LOG.md
+MAINTENANCE_ARCHIVE.md
+

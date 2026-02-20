@@ -37,7 +37,7 @@ const App: React.FC = () => {
       const lastNotified = notificationCooldowns.current[child.id!] || 0;
       // Notify every 5 minutes (300,000 ms)
       if (now - lastNotified > 300000) {
-        new Notification('TapTots: Late Alert', {
+        new Notification('Keedees: Late Alert', {
           body: `${child.firstName} ${child.lastName} has not arrived yet.`,
           icon: child.photoUrl
         });
@@ -97,7 +97,7 @@ const App: React.FC = () => {
   if (!isAuthenticated) {
     return (
       <div className="pin-screen">
-        <h1>Welcome to TapTots</h1>
+        <h1>Welcome to Keedees</h1>
         <p>Enter PIN to Unlock Kiosk</p>
         <div className="pin-display">
           {'●'.repeat(pin.length) + '○'.repeat(4 - pin.length)}
@@ -120,7 +120,7 @@ const App: React.FC = () => {
   return (
     <>
       <header className="dashboard-header">
-        <h1>TapTots Dashboard</h1>
+        <h1>Keedees Dashboard</h1>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <span style={{ fontWeight: 'bold' }}>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           <button onClick={handleLogout} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>Lock Kiosk</button>

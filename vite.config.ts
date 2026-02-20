@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'TapTots',
-        short_name: 'TapTots',
+        name: 'Keedees',
+        short_name: 'Keedees',
         description: 'One-Tap Attendance for Daycare',
         theme_color: '#242424',
         icons: [
